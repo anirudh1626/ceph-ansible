@@ -7,9 +7,24 @@
   until: result is succeeded
   when: ceph_custom_key is defined
 
+
+#- name: configure red hat custom repository
+#  get_url:
+  #  url: "{{ ceph_custom_repo }}"
+  #  dest: /etc/yum.repos.d
+  #  owner: root
+  #  group: root
+
+
 - name: configure red hat custom repository
-  get_url:
-    url: "{{ ceph_custom_repo }}"
-    dest: /etc/yum.repos.d
-    owner: root
-    group: root
+  yum_repository:
+    name: ceph_custom
+    description: Ceph Custom Repo
+    gpgcheck: yes
+    state: present
+    gpgkey: "{{ ceph_custom_key }}"
+    baseurl: "{{ ceph_custom_repo }}"
+    file: ceph_custom
+    priority: 2
+  register: result
+  until: result is succeeded
